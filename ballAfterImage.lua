@@ -12,7 +12,7 @@ function BallAfterImage:new(x, y, radiusX, radiusY)
 end
 
 function BallAfterImage:draw()
-    love.graphics.setColor(0.5, 0.5, 0.5, self.alpha)
+    love.graphics.setColor(1, 1, 1, self.alpha)
     local extraScale = self.alpha / 0.5
     love.graphics.ellipse("fill", self.x, self.y, self.radiusX * extraScale, self.radiusY * extraScale)
     love.graphics.setColor(1, 1, 1, 1)

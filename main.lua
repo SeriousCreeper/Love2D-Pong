@@ -1,12 +1,17 @@
 local Global = require("global")
-require "camera"
+local Camera = require("camera")
+
+Global.cameras.camBackground = Camera:new()
 
 function love.load()
     love.window.setMode(800, 600)
     love.window.setTitle("Pong Game")
+    -- make the background dark burgundy color
 
     math.randomseed(os.time())
     math.random()
+
+    love.graphics.setBackgroundColor(0.5 + math.random(10) / 100, 0.5 + math.random(10) / 100, 0.5 + math.random(10) / 100)
 
     for i = .5, 3, .5 do
         local rectangles = {}
@@ -23,9 +28,8 @@ function love.load()
             })
         end
 
-        Camera:newLayer(i, function()
+        Global.cameras.camBackground:newLayer(i, function()
             for _, v in ipairs(rectangles) do
-                local dimensions = unpack(v)
                 love.graphics.setColor(v.color)
                 love.graphics.rectangle('fill', unpack(v))
                 love.graphics.setColor(1, 1, 1)
@@ -37,12 +41,20 @@ function love.load()
 end
 
 function love.draw()
-    Camera:draw()
-    Global.currentState:draw()
+    for _, cam in pairs(Global.cameras) do
+        cam:draw()
+    end
+
+    for _, cam in pairs(Global.currentState.cameras) do
+        cam:draw()
+    end
 end
 
 function love.update(dt)
     Global.currentState:update(dt)
+    for _, cam in pairs(Global.cameras) do
+        cam:update(dt)
+    end
 end
 
 function love.keypressed(key)

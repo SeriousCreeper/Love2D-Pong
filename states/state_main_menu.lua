@@ -1,6 +1,15 @@
-StateMainMenu = {}
+local Camera = require "camera"
+
+StateMainMenu = {
+    cameras = {
+        camUi = Camera:new()
+    }
+}
 
 function StateMainMenu:load()
+    self.cameras.camUi:newLayer(1, function ()
+        self:draw()
+    end)
 end
 
 function StateMainMenu:keypressed(key)
@@ -22,7 +31,7 @@ function StateMainMenu:keypressed(key)
 end
 
 function StateMainMenu:update(dt)
-    Camera:setPosition(love.mouse.getX() * 0.2, love.mouse.getY() * 0.2)
+    Global.cameras.camBackground:setPosition(love.mouse.getX() * 0.2, love.mouse.getY() * 0.2)
 end
 
 function StateMainMenu:draw()

@@ -5,6 +5,8 @@ Global = {
     playerScore = 0,
     enemyScore = 0,
     playerCount = 1,
+    cameras = {
+    }
 }
 
 Global.states = {

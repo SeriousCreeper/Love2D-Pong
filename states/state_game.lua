@@ -1,9 +1,15 @@
 local Pedal = require("pedal")
 local Ball = require("ball")
 local Enemy = require("enemy")
+local Camera = require("camera")
 local BallAfterImage = require("ballAfterImage")
 
-StateGame = {}
+StateGame = {
+    cameras = {
+        camGame = Camera:new(),
+        camUi = Camera:new()
+    }
+}
 
 local leftPedal = Pedal:new(50, 250, 20, 100, 300)
 local rightPedal = Pedal:new(730, 250, 20, 100, 300)
@@ -19,6 +25,23 @@ function StateGame:load()
     ball:reset()
     Global.playerScore = 0
     Global.enemyScore = 0
+
+    self.cameras.camGame:newLayer(1, function ()
+        self:draw()
+    end)
+    self.cameras.camUi:newLayer(1, function ()
+        self:drawUI()
+    end)
+end
+
+function StateGame:drawUI()
+    love.graphics.printf("FPS: " .. tostring(love.timer.getFPS()), 10, 10, love.graphics.getWidth(), "left")
+    love.graphics.printf("Player: " .. Global.playerScore .. "  Enemy: " .. Global.enemyScore, 0, 30, love.graphics.getWidth(), "center")
+    love.graphics.printf("Use W/S to move the left pedal", 20, love.graphics.getHeight() - 20, love.graphics.getWidth(), "left")
+
+    if not enemy then
+        love.graphics.printf("Use Up/Down arrows to move the right pedal", 20, love.graphics.getHeight() - 20, love.graphics.getWidth(), "right")
+    end
 end
 
 function StateGame:draw()
@@ -30,14 +53,6 @@ function StateGame:draw()
     end
 
     ball:draw()
-    
-    love.graphics.printf("FPS: " .. tostring(love.timer.getFPS()), 10, 10, love.graphics.getWidth(), "left")
-    love.graphics.printf("Player: " .. Global.playerScore .. "  Enemy: " .. Global.enemyScore, 0, 30, love.graphics.getWidth(), "center")
-    love.graphics.printf("Use W/S to move the left pedal", 20, love.graphics.getHeight() - 20, love.graphics.getWidth(), "left")
-
-    if not enemy then
-        love.graphics.printf("Use Up/Down arrows to move the right pedal", 20, love.graphics.getHeight() - 20, love.graphics.getWidth(), "right")
-    end
 end
 
 function StateGame:keypressed(key)
@@ -48,7 +63,12 @@ function StateGame:keypressed(key)
 end
 
 function StateGame:update(dt)
-    Camera:setPosition(ball.x / 10, ball.y / 10)
+    Global.cameras.camBackground:setPosition((ball.x - love.graphics.getWidth() / 2) / 10, (ball.y - love.graphics.getHeight() / 2) / 10)
+
+    for _, cam in pairs(self.cameras) do
+        cam:update(dt)
+    end
+
 
     leftPedal:update(dt)
     rightPedal:update(dt)

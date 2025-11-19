@@ -46,6 +46,7 @@ function Ball:checkPedalCollision(pedal)
             pedal:bounce()
             self:squishWidth()
             self.extraSpeed = 4
+            Global.currentState.cameras.camGame:shake(5, 0.1)
             return true
         end
 
@@ -61,6 +62,7 @@ function Ball:checkWallCollision()
         self.y = math.max(self.radius, math.min(windowHeight - self.radius, self.y))
         self.speedY = -self.speedY
         self:squishHeight()
+        Global.currentState.cameras.camGame:shake(3, 0.1)
     end
 end
 

@@ -1,11 +1,21 @@
-Camera = {
-    x = 0,
-    y = 0,
-    scaleX = 1,
-    scaleY = 1,
-    rotation = 0,
-    layers = {}
-}
+local Camera = {}
+Camera.__index = Camera
+
+function Camera:new()
+    local cam = setmetatable({}, Camera)
+    cam.x = 0
+    cam.y = 0
+    cam.scaleX = 1
+    cam.scaleY = 1
+    cam.rotation = 0
+    cam.shakeIntensity = 0
+    cam.shakeTimer = 0
+    cam.layers = {}
+    cam.tempX = 0
+    cam.tempY = 0
+    cam.isShaking = false
+    return cam
+end
 
 function Camera:set()
     love.graphics.push()
@@ -62,8 +72,43 @@ function Camera:draw()
   for _, v in ipairs(self.layers) do
     self.x = bx * v.scale
     self.y = by * v.scale
-    Camera:set()
+    self:set()
     v.draw()
-    Camera:unset()
+    self:unset()
   end
 end
+
+function Camera:update(dt)
+    if self.shakeTimer > 0 then
+        self.shakeTimer = self.shakeTimer - dt
+        local shakeX = (math.random() * 2 - 1) * self.shakeIntensity
+        local shakeY = (math.random() * 2 - 1) * self.shakeIntensity
+        self.x = self.tempX + shakeX
+        self.y = self.tempY + shakeY
+    else
+        if self.isShaking then
+            self.isShaking = false
+            self.x = self.tempX
+            self.y = self.tempY
+        end
+
+        self.shakeIntensity = 0
+        self.shakeTimer = 0
+    end
+end
+
+function Camera:shake(intensity, length)
+    if self.isShaking then
+        self.x = self.tempX
+        self.y = self.tempY
+    end
+
+    self.tempX = self.x
+    self.tempY = self.y
+
+    self.shakeIntensity = intensity or 1
+    self.shakeTimer = length or 0.5
+    self.isShaking = true
+end
+
+return Camera
