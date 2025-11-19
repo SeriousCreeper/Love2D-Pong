@@ -22,6 +22,7 @@ function StateMainMenu:keypressed(key)
 end
 
 function StateMainMenu:update(dt)
+    Camera:setPosition(love.mouse.getX() * 0.2, love.mouse.getY() * 0.2)
 end
 
 function StateMainMenu:draw()

@@ -48,6 +48,8 @@ function StateGame:keypressed(key)
 end
 
 function StateGame:update(dt)
+    Camera:setPosition(ball.x / 10, ball.y / 10)
+
     leftPedal:update(dt)
     rightPedal:update(dt)
     ball:move(dt)
